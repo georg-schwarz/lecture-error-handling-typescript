@@ -57,4 +57,25 @@ That is a common issue in TypeScript since errors are not part of the method sig
 Please find the code for this example [here](examples/01-no-error-signature.ts).
 
 
+## 2. Documentation as the fix?
+
+As a very naive way, the developer of the `parseFile` function can add documentation to indicate to clients that some exceptions can be raised.
+JSdoc offers a `@throws` tag to indicate what kind of things might be thrown by a function.
+
+```js
+/**
+ * Parses a file and returns its content as a string.
+ * @param filePath The file path to parse.
+ * @returns The file content
+ * @throws {Error} If the file does not exist, is empty, or cannot be read due to a lack of privileges.
+ */
+export function parseFile(filePath: string): string { ... }
+```
+![alt text](resources/hover-documentation.png)
+
+As a result, clients can see the documentation when hovering over the function.
+Still, it is **easy to forget** to look at the documentation, leaving to the same problem like before: forgetting to handle the error.
+Instead, we want to enforce the client to handle the errors.
+
+
 
