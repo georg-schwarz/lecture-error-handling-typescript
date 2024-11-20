@@ -1,10 +1,10 @@
-import { parseFile } from "./03-parse";
+import { parseFile } from "./04-parse";
 
 function run(filePath: string) {
   const result = parseFile(filePath);
 
-  if (result instanceof Error) { // instanceof is whacky, only works for classes
-    console.error(result.message);
+  if (!result.isSuccess) { // works for any success result type now!
+    console.error(result.error);
     return;
   }
 
