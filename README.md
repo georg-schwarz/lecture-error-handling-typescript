@@ -313,4 +313,8 @@ Please find the code for this example [here](examples/06-multiple-checked.ts).
 
 🎉 Congratulations for making it this far! You now can properly handle errors in your TypeScript code! 🎉
 
+## Further thoughts
 
+The concept of grouping two values is nothing new. Actually it is very common in functional programming to have concepts like `Either<L, R>` that hold a generic left and a generic right value.
+If you plan to do more functional programming, I'd recommend to use a library like [fp-ts](https://github.com/gcanti/fp-ts) and base your error handling on it instead of creating your own from scratch.
+You can find an [example](https://github.dev/jvalue/jayvee/tree/main/libs/language-server/src/lib/ast) in [Jayvee](https://github.com/jvalue/jayvee), an open source domain-specific language for data engineering that I collaborated on.
