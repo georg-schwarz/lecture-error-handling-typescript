@@ -140,3 +140,64 @@ export function parseFile(filePath: string): string | string {
 With all these edge cases, we will need to find a more generic way to express an error.
 
 Please find the code for this example [here](examples/03-error-union.ts).
+
+
+## 4. Generic result type
+
+What we want as a client is a simple way to identify if the result indicates a successful operation or a failure. Further, we want the TypeScript compiler to infer that a successful result always contains data.
+
+```javascript
+function run(filePath: string) {
+  const result = parseFile(filePath);
+
+  if (!result.isSuccess) { // Should work for any type of result / error
+    console.error(result.error);
+    return;
+  }
+
+  console.log(`Read file: ${result.data.length}`);
+}
+```
+
+We will use the idea of a type union again. But this time, we return a wrapper that indicates whether the result is a success or not. To accommodate any result and error type, we use generics. With generics, we can define type variables that are usable to define fields. As such, we can define `Success<D>` to contain a property `data` of type `D`. `D` can be any type ranging from a `string` to a complex object. Using generics in this way allows us to create generic types that can be used in multiple functions to express different results, so we don't have to define individual result types.
+
+```javascript
+interface Success<D> {
+  isSuccess: true; // always true
+  data: D;
+}
+
+interface Failure<E> {
+  isSuccess: false; // always false
+  error: E;
+}
+
+type Result<D, E> = Success<D> | Failure<E>;
+
+// Helper functions
+const success = <D>(data: D): Success<D> => ({ isSuccess: true, data });
+const failure = <E>(error: E): Failure<E> => ({ isSuccess: false, error });
+```
+
+We can use these utility types, we can now return a `Result` that contains a property `result` of type `string` on success, and a property `error` of type `string` on failure.
+
+```javascript 
+export function parseFile(filePath: string): Result<string, string> {
+  if (!fs.existsSync(filePath)) {
+    return failure(`The file at ${filePath} does not exist.`);
+  }
+
+  try {
+    fs.accessSync(filePath, fs.constants.R_OK);
+  } catch (err) {
+    return failure(`The file at ${filePath} cannot be read. Contact support.`);
+  }
+  
+  const content = fs.readFileSync(filePath, "utf-8");
+  return success(content);
+}
+```
+
+While this approach works perfectly fine, we will have to do some fine-granular adjustments to support clients to `differentiate unchecked and checked errors`. 
+
+Please find the code for this example [here](examples/04-result-type.ts).
