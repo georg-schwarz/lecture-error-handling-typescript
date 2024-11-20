@@ -1,4 +1,4 @@
-import { parseFile } from "./01-parse";
+import { parseFile } from "./02-parse";
 
 function run(filePath: string) {
   try {
@@ -9,7 +9,6 @@ function run(filePath: string) {
     console.error(err instanceof Error ? err.message : 'Unknown error');
   }
   // Problem: clients cannot distinguish between different errors from the signature (as there is none).
-  // So error handling requires looking into the code.
 }
 
 run("my-file.txt");
