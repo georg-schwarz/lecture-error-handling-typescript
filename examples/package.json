@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start:1": "npm run build && node dist/01-no-error-signature.js"
+    "start:1": "npm run build && node dist/01-no-error-signature.js",
+    "start:2": "npm run build && node dist/02-error-in-doc.js",
+    "start:3": "npm run build && node dist/03-error-union.js",
+    "start:4": "npm run build && node dist/04-result-type.js",
+    "start:5": "npm run build && node dist/05-checked-unchecked.js"
   },
   "devDependencies": {
     "@types/node": "^22.9.1",

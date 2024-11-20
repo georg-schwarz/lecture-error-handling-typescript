@@ -1,4 +1,4 @@
-import { parseFile } from "./04-parse";
+import { parseFile } from "./04-parse.js";
 
 function run(filePath: string) {
   const result = parseFile(filePath);
@@ -8,8 +8,12 @@ function run(filePath: string) {
     return;
   }
 
-  console.log("Success");
+  console.log(`Read file: ${result.data.length}`);
   // Problem: No differentiation between recoverable and unrecoverable errors
 }
 
-run("my-file.txt");
+run("./file.txt");
+run("./no-file.txt");
+run("./no-access.txt"); // <<< new!
+
+console.log("Other stuff happening that might make things worse after unrecoverable error");

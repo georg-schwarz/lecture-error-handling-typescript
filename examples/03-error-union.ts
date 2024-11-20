@@ -1,4 +1,4 @@
-import { parseFile } from "./03-parse";
+import { parseFile } from "./03-parse.js";
 
 function run(filePath: string) {
   const result = parseFile(filePath); // We now return errors instead of throwing them
@@ -8,7 +8,8 @@ function run(filePath: string) {
     return;
   }
 
-  console.log("Success");
+  console.log(`Read file: ${result.length}`);
 }
 
-run("my-file.txt");
+run("./file.txt");
+run("./no-file.txt");

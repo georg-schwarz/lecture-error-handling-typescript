@@ -26,12 +26,12 @@ export function parseFile(filePath: string): Result<string, string> {
     return failure(`The file at ${filePath} does not exist.`);
   }
 
-  const content = fs.readFileSync(filePath, "utf-8");
   try {
     fs.accessSync(filePath, fs.constants.R_OK);
   } catch (err) {
     return failure(`The file at ${filePath} cannot be read. Contact support.`);
   }
-
+  
+  const content = fs.readFileSync(filePath, "utf-8");
   return success(content);
 }

@@ -1,13 +1,10 @@
-import { parseFile } from "./01-parse";
+import { parseFile } from "./01-parse.js";
 
 function run(filePath: string) {
-  try {
-    const fileContent = parseFile(filePath);
-    console.log("Success");
-  } catch (err) {
-    console.error(err instanceof Error ? err.message : 'Unknown error');
-  }
-  // Problem: Error handling requires looking into the code.
+  const fileContent = parseFile(filePath);
+  console.log(`Read file: ${fileContent.length}`);
+  // Problem: Didn't know I have to handle errors
 }
 
-run("my-file.txt");
+run("./file.txt");
+run("./no-file.txt");

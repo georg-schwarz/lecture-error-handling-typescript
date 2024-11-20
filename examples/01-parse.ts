@@ -5,12 +5,12 @@ export function parseFile(filePath: string): string {
     throw new Error(`The file at ${filePath} does not exist.`);
   }
 
-  const content = fs.readFileSync(filePath, "utf-8");
   try {
     fs.accessSync(filePath, fs.constants.R_OK);
   } catch (err) {
     throw new Error(`The file at ${filePath} cannot be read. Contact support.`);
   }
-
+  
+  const content = fs.readFileSync(filePath, "utf-8");
   return content;
 }
