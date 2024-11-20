@@ -128,6 +128,7 @@ function isParseFailure(x: unknown): x is ParseFailure {
 ```
 
 This still does not cover the case where we want to **return something of the same type as the successful result**, in the example a string. The client has no chance to know if the result is the file content or an error message.
+
 ```javascript
 export function parseFile(filePath: string): string | string {
   if (!fs.existsSync(filePath)) {
@@ -141,7 +142,6 @@ With all these edge cases, we will need to find a more generic way to express an
 
 Please find the code for this example [here](examples/03-error-union.ts).
 
-
 ## 4. Generic result type
 
 What we want as a client is a simple way to identify if the result indicates a successful operation or a failure. Further, we want the TypeScript compiler to infer that a successful result always contains data.
@@ -150,7 +150,8 @@ What we want as a client is a simple way to identify if the result indicates a s
 function run(filePath: string) {
   const result = parseFile(filePath);
 
-  if (!result.isSuccess) { // Should work for any type of result / error
+  if (!result.isSuccess) {
+    // Should work for any type of result / error
     console.error(result.error);
     return;
   }
@@ -181,7 +182,7 @@ const failure = <E>(error: E): Failure<E> => ({ isSuccess: false, error });
 
 We can use these utility types, we can now return a `Result` that contains a property `result` of type `string` on success, and a property `error` of type `string` on failure.
 
-```javascript 
+```javascript
 export function parseFile(filePath: string): Result<string, string> {
   if (!fs.existsSync(filePath)) {
     return failure(`The file at ${filePath} does not exist.`);
@@ -192,12 +193,44 @@ export function parseFile(filePath: string): Result<string, string> {
   } catch (err) {
     return failure(`The file at ${filePath} cannot be read. Contact support.`);
   }
-  
+
   const content = fs.readFileSync(filePath, "utf-8");
   return success(content);
 }
 ```
 
-While this approach works perfectly fine, we will have to do some fine-granular adjustments to support clients to `differentiate unchecked and checked errors`. 
+While this approach works perfectly fine, we will have to do some fine-granular adjustments to support clients to `differentiate unchecked and checked errors`.
 
 Please find the code for this example [here](examples/04-result-type.ts).
+
+## 5. Unchecked and checked errors
+
+The fatality of errors can differ. Some errors should be propagated to the client, leaving the decision to them whether to compensate, use an alternative, or further escalate the error. We call such errors checked errors / exceptions: we want the client to be aware of them and to handle them appropriately. In Java, those would be regular Exceptions that require definition in the method signature.
+
+Other errors are so severe that the system is not likely to recover. In such cases, we don't want to bother the client to handle it. Rather, we want that things fail at the boundary of our module. We call those unchecked errors / exceptions. In Java, those would be RuntimeExceptions.
+
+With our current implementation, the differentiation becomes quite easy:
+
+- **throw** unchecked errors
+- **return** checked errors
+
+```javascript
+export function parseFile(filePath: string): Result<string, string> {
+  if (!fs.existsSync(filePath)) {
+    return failure(`The file at ${filePath} does not exist.`); // client should handle it
+  }
+
+  try {
+    fs.accessSync(filePath, fs.constants.R_OK);
+  } catch (err) {
+    throw failure(`The file at ${filePath} cannot be read. Contact support.`); // no chance to recover anyway
+  }
+
+  const content = fs.readFileSync(filePath, "utf-8");
+  return success(content);
+}
+```
+
+For checked errors, we might have scenarios where there are **multiple (differently shaped)** error results.
+
+Please find the code for this example [here](examples/05-checked-unchecked.ts).
