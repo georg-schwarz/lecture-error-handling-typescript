@@ -1,4 +1,5 @@
 import { parseFile } from "./05-parse.js";
+import { waitForInput } from "./shared.js";
 
 function run(filePath: string) {
   const result = parseFile(filePath);
@@ -12,6 +13,9 @@ function run(filePath: string) {
   console.log(`Read file: ${result.data.length}`);
 }
 
-run("../file.txt");
-run("../no-file.txt");
+await waitForInput();
+run("./file.txt");
+await waitForInput();
+run("./no-file.txt");
+await waitForInput();
 run("./no-access.txt"); // <<< new!

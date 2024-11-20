@@ -1,4 +1,5 @@
 import { parseFile } from "./02-parse.js";
+import { waitForInput } from "./shared.js";
 
 function run(filePath: string) {
   try {
@@ -11,5 +12,7 @@ function run(filePath: string) {
   }
 }
 
+await waitForInput();
 run("./file.txt");
+await waitForInput();
 run("./no-file.txt");
