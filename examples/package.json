@@ -1,10 +1,11 @@
 {
   "name": "lecture-error-handling-typescript",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node index.js"
+    "start:1": "npm run build && node dist/01-no-error-signature.js"
   },
   "devDependencies": {
     "@types/node": "^22.9.1",
