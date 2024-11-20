@@ -1,15 +1,14 @@
 import { parseFile } from "./03-parse";
 
 function run(filePath: string) {
-  const result = parseFile(filePath);
+  const result = parseFile(filePath); // We now return errors instead of throwing them
 
-  if (result instanceof Error) { // instanceof is whacky, only works for classes
+  if (result instanceof Error) { // Problem: instanceof is whacky, only works for classes
     console.error(result.message);
     return;
   }
 
   console.log("Success");
-  // Clients now can distinguish between different errors via the signature (as it is in the return type).
 }
 
 run("my-file.txt");
