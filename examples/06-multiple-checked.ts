@@ -1,4 +1,4 @@
-import { parseFile } from "./05-parse.js";
+import { parseFile } from "./06-parse.js";
 import { waitForInput } from "./shared.js";
 
 function run(filePath: string) {
@@ -6,13 +6,21 @@ function run(filePath: string) {
 
   // Unrecoverable errors are thrown and crash the program
   if (!result.isSuccess) { // Handle recoverable errors
-    console.error(result.error);
-    return;
+    switch (result.error.type) {
+      case "file-not-found":
+        console.error(`File not found: ${filePath}`);
+        return;
+      case "file-corrupt":
+        console.error(`File corrupt: ${filePath}`);
+        return;
+    }
   }
 
-  // Problem: How to handle different error types?
-
   console.log(`Read file: ${result.data.length}`);
+}
+
+function assertAllCasesHandled(x: never): never {
+  throw new Error(`Unhandled case: ${x}`);
 }
 
 await waitForInput();
