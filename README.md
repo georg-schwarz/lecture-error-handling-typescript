@@ -234,3 +234,83 @@ export function parseFile(filePath: string): Result<string, string> {
 For checked errors, we might have scenarios where there are **multiple (differently shaped)** error results.
 
 Please find the code for this example [here](examples/05-checked-unchecked.ts).
+
+## 6. Multiple checked errors
+
+Let's extend our `parseFile` example to accommodate different error scenarios that clients should be able to react on in different ways by checking whether the file starts with the word `CORRUPT`. In this case, a client might react differently compared to when the file does just not exist.
+To allow clients to easily differentiate between error cases, we have to modify the failure return type.
+
+```javascript
+type ParseError = {
+  type: "file-not-found" | "file-corrupt",
+  message: string,
+};
+
+export function parseFile(filePath: string): Result<string, ParseError> {
+  if (!fs.existsSync(filePath)) {
+    return failure({
+      type: "file-not-found",
+      message: `The file at ${filePath} does not exist.`,
+    });
+  }
+
+  try {
+    fs.accessSync(filePath, fs.constants.R_OK);
+  } catch (err) {
+    throw Error(`The file at ${filePath} cannot be read. Contact support.`);
+  }
+
+  const content = fs.readFileSync(filePath, "utf-8");
+  if (content.startsWith("CORRUPT")) {
+    return failure({
+      type: "file-corrupt",
+      message: `The file at ${filePath} is corrupt.`,
+    });
+  }
+
+  return success(content);
+}
+```
+
+We use a similar mechanism like in the differentiation of `Success` and `Failure`. Instead of using the binary `true` or `false` values, we can instead define a `type` property that can have an arbitrary amount of `string literal` values.
+The TypeScript compiler supports client to only match with the given `literals` rather than arbitrary strings, making this a type safe option.
+Dedicated error handling might look something like this:
+
+```javascript
+function run(filePath: string) {
+  const result = parseFile(filePath);
+
+  if (!result.isSuccess) {
+    switch (result.error.type) {
+      case "file-not-found":
+        console.error(`File not found: ${filePath}`);
+        return;
+      case "file-corrupt":
+        console.error(`File corrupt: ${filePath}`);
+        return;
+    }
+  }
+
+  console.log(`Read file: ${result.data.length}`);
+}
+```
+
+By the way, the example is extendable with type union so that different failure return types can have different shapes as well:
+
+```javascript
+type ParseError =
+  | {
+      type: "file-not-found",
+      filePath: string,
+    }
+  | {
+      type: "file-corrupt",
+      lastModified: Date,
+    };
+```
+
+Please find the code for this example [here](examples/06-multiple-checked.ts).
+
+🎉 Congratulations for making it this far! You now can properly handle errors in your TypeScript code! 🎉
+
+
