@@ -1,4 +1,4 @@
-# A Small Lecture on Error Handling in TypeScript
+# Enforced and Type-safe Error Handling in TypeScript
 
 ... for software engineers who are not familiar with the weird type system of TypeScript ;-)
 
