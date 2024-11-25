@@ -315,6 +315,15 @@ Please find the code for this example [here](examples/06-multiple-checked.ts).
 
 ## Further thoughts
 
-The concept of grouping two values is nothing new. Actually it is very common in functional programming to have concepts like `Either<L, R>` that hold a generic left and a generic right value.
+- The concept of grouping two values is nothing new. Actually it is very common in functional programming to have concepts like `Either<L, R>` that hold a generic left and a generic right value.
 If you plan to do more functional programming, I'd recommend to use a library like [fp-ts](https://github.com/gcanti/fp-ts) and base your error handling on it instead of creating your own from scratch.
 You can find an [example](https://github.dev/jvalue/jayvee/tree/main/libs/language-server/src/lib/ast) in [Jayvee](https://github.com/jvalue/jayvee), an open source domain-specific language for data engineering that I collaborated on.
+- There are proposals like [this](https://github.com/arthurfiorette/proposal-safe-assignment-operator) to improve error handling syntax for upcoming JavaScript versions, e.g., with a new `?=` operator and using typed tuples as return type, reminding of [how Golang implements error handling](https://go.dev/blog/error-handling-and-go). 
+Let's hope we will see some great additions in that regard!
+```javascript
+const [parseError, result] ?= parseFile(filePath);
+
+// Return typed tuples:
+// Error case:   [string, null]
+// Success case: [null, Error] 
+```
